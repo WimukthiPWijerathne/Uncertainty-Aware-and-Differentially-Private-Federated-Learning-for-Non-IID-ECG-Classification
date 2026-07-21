@@ -8,8 +8,8 @@
 ## 1. Clone the repo
 
 ```
-git clone <repo-url>
-cd uap-fedecg
+git clone https://github.com/WimukthiPWijerathne/Uncertainty-Aware-and-Differentially-Private-Federated-Learning-for-Non-IID-ECG-Classification.git
+cd filename //change the folder name after cloning cuz the topic name is too long would cause issues in requirement installing
 ```
 
 ## 2. Create and activate a virtual environment
