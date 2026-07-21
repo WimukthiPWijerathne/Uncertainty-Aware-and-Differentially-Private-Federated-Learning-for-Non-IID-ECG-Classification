@@ -1,0 +1,12 @@
+torch>=2.1     # building and training deep learning model - cnn, rnn transformers
+flwr>=1.8      # framework for federated learning
+opacus>=1.4    # differential privacy (DP) for pytorch trainin - help protect sensitive training data
+numpy      
+pandas               
+scikit-learn
+matplotlib
+wfdb           # waveform database library for reading, writing, and processing physiologic signals like ECG, EEG, and EMG
+tqdm           # progress bar for loops and tasks and provides a visual representation of the progress of a task
+
+
+

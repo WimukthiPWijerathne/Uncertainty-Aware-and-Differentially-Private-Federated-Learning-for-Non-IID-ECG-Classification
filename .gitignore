@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Data — never commit this, it's ~1.7GB and everyone downloads it locally
+ptbxl_data/
+*.zip
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
