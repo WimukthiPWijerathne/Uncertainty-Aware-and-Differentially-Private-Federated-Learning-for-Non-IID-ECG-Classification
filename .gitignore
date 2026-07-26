@@ -4,8 +4,9 @@ __pycache__/
 venv/
 .venv/
 
-# Data — never commit this, it's ~1.7GB and everyone downloads it locally
-ptbxl_data/
+# Data — never commit this, everyone downloads/generates it locally
+data/raw/
+data/processed/
 *.zip
 
 # Notebooks
