@@ -3,25 +3,20 @@ Verify that PTB-XL records can be loaded through the PyTorch Dataset.
 """
 
 from pathlib import Path
+import sys
 
 import pandas as pd
 from torch.utils.data import DataLoader
 
-from src.data.ecg_dataset import PTBXLDataset
-
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
 
-DATASET_ROOT = (
-    PROJECT_ROOT / "data" / "raw" / "ptb-xl"
-)
+from data.ecg_dataset import PTBXLDataset
+from data.paths import PROCESSED_DATA_ROOT, get_dataset_root
 
-METADATA_PATH = (
-    PROJECT_ROOT
-    / "data"
-    / "processed"
-    / "ptbxl_superclasses.csv"
-)
+
+DATASET_ROOT = get_dataset_root()
+METADATA_PATH = PROCESSED_DATA_ROOT / "ptbxl_superclasses.csv"
 
 
 def main() -> None:

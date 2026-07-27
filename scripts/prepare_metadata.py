@@ -9,16 +9,21 @@ Outputs:
 from __future__ import annotations
 
 import ast
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MultiLabelBinarizer
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DATASET_ROOT = PROJECT_ROOT / "data" / "raw" / "ptb-xl"
-OUTPUT_DIRECTORY = PROJECT_ROOT / "data" / "processed"
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from data.paths import PROCESSED_DATA_ROOT, get_dataset_root
+
+
+DATASET_ROOT = get_dataset_root()
+OUTPUT_DIRECTORY = PROCESSED_DATA_ROOT
 
 METADATA_PATH = DATASET_ROOT / "ptbxl_database.csv"
 STATEMENTS_PATH = DATASET_ROOT / "scp_statements.csv"
@@ -135,18 +140,10 @@ def main() -> None:
         metadata["diagnostic_superclasses"].map(len) > 0
     ].copy()
 
-    label_encoder = MultiLabelBinarizer(
-        classes=CLASS_NAMES
-    )
-
-    label_encoder.fit([CLASS_NAMES])
-
-    encoded_labels = label_encoder.transform(
-        metadata["diagnostic_superclasses"]
-    ).astype(np.float32)
-
-    for class_index, class_name in enumerate(CLASS_NAMES):
-        metadata[class_name] = encoded_labels[:, class_index]
+    for class_name in CLASS_NAMES:
+        metadata[class_name] = metadata[
+            "diagnostic_superclasses"
+        ].map(lambda labels: np.float32(class_name in labels))
 
     metadata["split"] = metadata["strat_fold"].apply(
         assign_split

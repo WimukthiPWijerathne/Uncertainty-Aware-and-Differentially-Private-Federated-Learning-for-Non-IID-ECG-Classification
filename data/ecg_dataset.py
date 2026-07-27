@@ -55,6 +55,14 @@ class PTBXLDataset(Dataset):
                 f"Missing label columns: {sorted(missing_classes)}"
             )
 
+        if "filename_lr" not in self.metadata.columns:
+            raise ValueError("Metadata is missing the 'filename_lr' column")
+
+        if not self.dataset_root.is_dir():
+            raise FileNotFoundError(
+                f"PTB-XL dataset root was not found: {self.dataset_root}"
+            )
+
     def __len__(self) -> int:
         return len(self.metadata)
 
@@ -94,8 +102,14 @@ class PTBXLDataset(Dataset):
         row = self.metadata.iloc[index]
 
         record_path = (
-            self.dataset_root / row["filename_lr"]
+            self.dataset_root / str(row["filename_lr"])
         )
+
+        if not record_path.with_suffix(".hea").is_file():
+            raise FileNotFoundError(
+                f"PTB-XL waveform header was not found: "
+                f"{record_path.with_suffix('.hea')}"
+            )
 
         signal, signal_information = wfdb.rdsamp(
             str(record_path)
