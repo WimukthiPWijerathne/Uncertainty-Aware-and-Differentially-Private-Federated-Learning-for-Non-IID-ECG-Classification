@@ -5,9 +5,23 @@ venv/
 .venv/
 
 # Data — never commit this, everyone downloads/generates it locally
-data/raw/
-data/processed/
+data/raw/*
+data/processed/*
+data/partitions/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/partitions/.gitkeep
 *.zip
+
+# Generated experiment outputs
+results/checkpoints/*
+results/logs/*
+results/figures/*
+results/tables/*
+!results/checkpoints/.gitkeep
+!results/logs/.gitkeep
+!results/figures/.gitkeep
+!results/tables/.gitkeep
 
 # Notebooks
 .ipynb_checkpoints/

@@ -19,7 +19,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from data.paths import PROCESSED_DATA_ROOT, get_dataset_root
+from src.data.paths import PROCESSED_DATA_ROOT, get_dataset_root
 
 
 DATASET_ROOT = get_dataset_root()

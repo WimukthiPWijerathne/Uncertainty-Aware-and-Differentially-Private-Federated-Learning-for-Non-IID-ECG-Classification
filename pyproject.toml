@@ -1,0 +1,17 @@
+[project]
+name = "uncertainty-aware-and-differentially-private-federated-learning-for-non-iid-ecg-classification"
+version = "0.1.0"
+description = "Uncertainty-aware, differentially private federated learning for ECG classification"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flwr>=1.8",
+    "matplotlib",
+    "numpy",
+    "opacus>=1.4",
+    "pandas",
+    "scikit-learn",
+    "torch>=2.1",
+    "tqdm",
+    "wfdb",
+]

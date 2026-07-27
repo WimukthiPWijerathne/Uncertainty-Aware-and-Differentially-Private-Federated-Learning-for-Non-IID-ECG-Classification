@@ -40,7 +40,10 @@ pip install -r requirements.txt
 ## 4. Confirm everything works
 
 ```
-python models/cnn1d.py
+python scripts/01_verify_ptbxl.py
+python scripts/02_prepare_metadata.py
+python scripts/03_smoke_test_dataset.py
+python scripts/04_smoke_test_model.py
 ```
 
 Expected output:

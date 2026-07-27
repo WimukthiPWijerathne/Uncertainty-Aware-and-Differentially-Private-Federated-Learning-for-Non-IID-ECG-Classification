@@ -8,9 +8,9 @@ from torch.utils.data import DataLoader
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from data.ecg_dataset import PTBXLDataset
-from data.paths import PROCESSED_DATA_ROOT, get_dataset_root
-from models.cnn1d import ECG1DCNN
+from src.data.ecg_dataset import PTBXLDataset
+from src.data.paths import PROCESSED_DATA_ROOT, get_dataset_root
+from src.models.cnn1d import ECG1DCNN
 
 
 DATASET_ROOT = get_dataset_root()

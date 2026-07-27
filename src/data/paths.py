@@ -6,12 +6,8 @@ import os
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DATASET_ROOT = (
-    PROJECT_ROOT
-    / "dataset"
-    / "ptb-xl-a-large-publicly-available-electrocardiography-dataset-1.0.3"
-)
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_DATASET_ROOT = PROJECT_ROOT / "data" / "raw" / "ptb-xl"
 PROCESSED_DATA_ROOT = PROJECT_ROOT / "data" / "processed"
 
 
