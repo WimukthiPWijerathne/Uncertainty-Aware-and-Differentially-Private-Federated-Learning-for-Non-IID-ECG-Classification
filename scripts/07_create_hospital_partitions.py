@@ -113,7 +113,7 @@ def generate_patient_assignment(
     for class_name in DEFAULT_CLASS_NAMES:
         class_patients = patient_table.index[
             patient_table["primary_class"] == class_name
-        ].to_numpy()
+        ].to_numpy(copy=True)
 
         rng.shuffle(class_patients)
 
