@@ -7,8 +7,32 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_DATASET_ROOT = PROJECT_ROOT / "data" / "raw" / "ptb-xl"
-PROCESSED_DATA_ROOT = PROJECT_ROOT / "data" / "processed"
+
+DATA_DIR = PROJECT_ROOT / "data"
+
+RAW_DATA_DIR = DATA_DIR / "raw"
+PTBXL_ROOT = RAW_DATA_DIR / "ptb-xl"
+
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
+PARTITIONS_DIR = DATA_DIR / "partitions"
+
+PTBXL_METADATA_PATH = PTBXL_ROOT / "ptbxl_database.csv"
+SCP_STATEMENTS_PATH = PTBXL_ROOT / "scp_statements.csv"
+
+PROCESSED_METADATA_PATH = (
+    PROCESSED_DATA_DIR / "ptbxl_superclasses.csv"
+)
+CLASS_NAMES_PATH = PROCESSED_DATA_DIR / "class_names.txt"
+
+RESULTS_DIR = PROJECT_ROOT / "results"
+CHECKPOINTS_DIR = RESULTS_DIR / "checkpoints"
+LOGS_DIR = RESULTS_DIR / "logs"
+FIGURES_DIR = RESULTS_DIR / "figures"
+TABLES_DIR = RESULTS_DIR / "tables"
+
+# Backward-compatible names used by the existing preparation and smoke tests.
+DEFAULT_DATASET_ROOT = PTBXL_ROOT
+PROCESSED_DATA_ROOT = PROCESSED_DATA_DIR
 
 
 def get_dataset_root() -> Path:

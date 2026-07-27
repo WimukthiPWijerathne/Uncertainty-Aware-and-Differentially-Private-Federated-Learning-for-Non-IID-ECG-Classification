@@ -10,8 +10,16 @@ dependencies = [
     "numpy",
     "opacus>=1.4",
     "pandas",
+    "pyyaml>=6.0.3",
     "scikit-learn",
+    "scipy>=1.18.0",
     "torch>=2.1",
     "tqdm",
     "wfdb",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "jupyterlab>=4.6.2",
 ]
