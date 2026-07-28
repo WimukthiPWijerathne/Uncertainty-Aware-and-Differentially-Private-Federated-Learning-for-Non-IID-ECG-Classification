@@ -42,11 +42,13 @@ def evaluate_model(
         signals = signals.to(
             device=device,
             dtype=torch.float32,
+            non_blocking=True,
         )
 
         labels = labels.to(
             device=device,
             dtype=torch.float32,
+            non_blocking=True,
         )
 
         logits = model(signals)

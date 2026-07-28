@@ -13,7 +13,6 @@ to False for full centralized training.
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -54,22 +53,24 @@ from src.training.train import train_one_epoch
 
 SEED = 42
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 DEBUG_TRAIN_SAMPLES = 2_000
 DEBUG_VALIDATION_SAMPLES = 500
 
 DEBUG_EPOCHS = 2
-FULL_EPOCHS = 15
+MAX_EPOCHS = 50
+EARLY_STOPPING_PATIENCE = 5
+MINIMUM_IMPROVEMENT = 1e-4
 
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-3
-NUM_WORKERS = 0
+NUM_WORKERS = 2
 
 NORMALIZE_PER_RECORD = False
 CLASSIFICATION_THRESHOLD = 0.5
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
 
 RESULTS_DIR = PROJECT_ROOT / "results"
 CHECKPOINT_DIR = RESULTS_DIR / "checkpoints"

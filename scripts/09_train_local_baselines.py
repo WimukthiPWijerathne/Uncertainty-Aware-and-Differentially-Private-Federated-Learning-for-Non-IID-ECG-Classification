@@ -49,34 +49,57 @@ from src.training.train import train_one_epoch
 # Experiment configuration
 # ---------------------------------------------------------
 
+
+
 NUM_HOSPITALS = 4
 
 SEED = 42
-EPOCHS = 3
+MAX_EPOCHS = 50
 
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-3
-NUM_WORKERS = 0
+NUM_WORKERS = 2
 
 CLASSIFICATION_THRESHOLD = 0.5
 NORMALIZE_PER_RECORD = False
 
 EARLY_STOPPING_PATIENCE = 3
 MINIMUM_IMPROVEMENT = 1e-4
-
+RUN_NAME = f"local_earlystop_max_{MAX_EPOCHS}"
 CHECKPOINT_DIR = (
     PROJECT_ROOT
     / "results"
     / "checkpoints"
-    / "local"
+    / RUN_NAME
 )
 
 RESULTS_PATH = (
     PROJECT_ROOT
     / "results"
     / "tables"
-    / "local_baseline_results.csv"
+    / f"{RUN_NAME}_results.csv"
 )
+
+HISTORY_DIR = (
+    PROJECT_ROOT
+    / "results"
+    / "logs"
+    / RUN_NAME
+)
+
+ALL_HISTORY_PATH = (
+    HISTORY_DIR
+    / "all_hospitals_epoch_history.csv"
+)
+
+CONFIG_PATH = (
+    PROJECT_ROOT
+    / "results"
+    / "tables"
+    / f"{RUN_NAME}_config.csv"
+)
+
+
 
 
 def set_random_seed(seed: int) -> None:
@@ -313,8 +336,15 @@ def train_hospital_model(
     best_model_state = None
 
     epochs_without_improvement = 0
+    epoch_history: list[dict] = []
+    stopped_early = False
 
-    for epoch in range(1, EPOCHS + 1):
+    hospital_history_path = (
+        HISTORY_DIR
+        / f"hospital_{hospital_id}_epoch_history.csv"
+    )
+
+    for epoch in range(1, MAX_EPOCHS + 1):
         train_loss = train_one_epoch(
             model=model,
             data_loader=train_loader,
@@ -332,7 +362,7 @@ def train_hospital_model(
         )
 
         print(
-            f"\nEpoch {epoch}/{EPOCHS}"
+            f"\nEpoch {epoch}/{MAX_EPOCHS}"
         )
 
         print(
@@ -360,11 +390,34 @@ def train_hospital_model(
             f"{validation_metrics['macro_auroc']:.4f}"
         )
 
-        if (
+        improved = (
             validation_metrics["loss"]
-            < best_validation_loss
-            - MINIMUM_IMPROVEMENT
-        ):
+            < best_validation_loss - MINIMUM_IMPROVEMENT
+        )
+
+        epoch_history.append(
+            {
+                "hospital_id": hospital_id,
+                "epoch": epoch,
+                "train_loss": train_loss,
+                "validation_loss": validation_metrics["loss"],
+                "validation_macro_f1": validation_metrics["macro_f1"],
+                "validation_weighted_f1": validation_metrics["weighted_f1"],
+                "validation_macro_auroc": validation_metrics["macro_auroc"],
+                "improved": improved,
+                "epochs_without_improvement": (
+                    0 if improved
+                    else epochs_without_improvement + 1
+                ),
+            }
+        )
+
+        pd.DataFrame(epoch_history).to_csv(
+            hospital_history_path,
+            index=False,
+        )
+
+        if improved:
             best_validation_loss = (
                 validation_metrics["loss"]
             )
@@ -408,6 +461,7 @@ def train_hospital_model(
                 print(
                     "Early stopping triggered."
                 )
+                stopped_early = True
                 break
 
     if best_model_state is None:
@@ -476,6 +530,8 @@ def train_hospital_model(
             "patient_id"
         ].nunique(),
         "best_epoch": best_epoch,
+        "epochs_ran": len(epoch_history),
+        "stopped_early": stopped_early,
         "best_validation_loss": (
             best_validation_loss
         ),
@@ -504,7 +560,7 @@ def train_hospital_model(
             f"{class_name}_test_auroc"
         ] = auroc_score
 
-    return result_row
+    return result_row, pd.DataFrame(epoch_history)
 
 
 def main() -> None:
@@ -514,6 +570,11 @@ def main() -> None:
     )
 
     RESULTS_PATH.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    HISTORY_DIR.mkdir(
         parents=True,
         exist_ok=True,
     )
@@ -528,12 +589,37 @@ def main() -> None:
 
     print(f"Device: {device}")
     print(f"Number of hospitals: {NUM_HOSPITALS}")
-    print(f"Epochs per hospital: {EPOCHS}")
+    print(f"Maximum epochs per hospital: {MAX_EPOCHS}")
     print(f"Batch size: {BATCH_SIZE}")
     print(f"Learning rate: {LEARNING_RATE}")
     print(
         f"Shared validation threshold: "
         f"{CLASSIFICATION_THRESHOLD}"
+    )
+    print(
+        f"Early stopping patience: "
+        f"{EARLY_STOPPING_PATIENCE}"
+    )
+
+    pd.DataFrame(
+        [
+            {
+                "run_name": RUN_NAME,
+                "seed": SEED,
+                "max_epochs": MAX_EPOCHS,
+                "batch_size": BATCH_SIZE,
+                "learning_rate": LEARNING_RATE,
+                "num_workers": NUM_WORKERS,
+                "classification_threshold": CLASSIFICATION_THRESHOLD,
+                "normalize_per_record": NORMALIZE_PER_RECORD,
+                "early_stopping_patience": EARLY_STOPPING_PATIENCE,
+                "minimum_improvement": MINIMUM_IMPROVEMENT,
+                "device": str(device),
+            }
+        ]
+    ).to_csv(
+        CONFIG_PATH,
+        index=False,
     )
 
     validation_metadata, test_metadata = (
@@ -563,6 +649,7 @@ def main() -> None:
     )
 
     result_rows: list[dict] = []
+    all_epoch_histories: list[pd.DataFrame] = []
 
     for hospital_id in range(NUM_HOSPITALS):
         hospital_metadata = (
@@ -571,7 +658,7 @@ def main() -> None:
             )
         )
 
-        result_row = train_hospital_model(
+        result_row, hospital_history = train_hospital_model(
             hospital_id=hospital_id,
             hospital_metadata=hospital_metadata,
             validation_loader=validation_loader,
@@ -581,6 +668,18 @@ def main() -> None:
 
         result_rows.append(
             result_row
+        )
+
+        all_epoch_histories.append(
+            hospital_history
+        )
+
+        pd.concat(
+            all_epoch_histories,
+            ignore_index=True,
+        ).to_csv(
+            ALL_HISTORY_PATH,
+            index=False,
         )
 
         # Save progress after every hospital.
@@ -610,6 +709,8 @@ def main() -> None:
                 "hospital_id",
                 "training_records",
                 "best_epoch",
+                "epochs_ran",
+                "stopped_early",
                 "test_macro_f1",
                 "test_weighted_f1",
                 "test_macro_auroc",
@@ -627,6 +728,21 @@ def main() -> None:
     print(
         f"Checkpoints saved under: "
         f"{CHECKPOINT_DIR}"
+    )
+
+    print(
+        f"Per-epoch histories saved under: "
+        f"{HISTORY_DIR}"
+    )
+
+    print(
+        f"Combined epoch history: "
+        f"{ALL_HISTORY_PATH}"
+    )
+
+    print(
+        f"Run configuration: "
+        f"{CONFIG_PATH}"
     )
 
 
