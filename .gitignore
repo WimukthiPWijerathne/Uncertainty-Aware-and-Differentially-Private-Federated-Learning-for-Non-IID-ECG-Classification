@@ -16,11 +16,11 @@ data/partitions/*
 # Generated experiment outputs
 results/checkpoints/*
 results/logs/*
-results/figures/*
+
 results/tables/*
 !results/checkpoints/.gitkeep
 !results/logs/.gitkeep
-!results/figures/.gitkeep
+
 !results/tables/.gitkeep
 
 # Notebooks
