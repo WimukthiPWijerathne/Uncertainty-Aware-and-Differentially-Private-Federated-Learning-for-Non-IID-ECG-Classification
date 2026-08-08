@@ -1,0 +1,18 @@
+{
+  "method": "DP-FedAvg",
+  "checkpoint": "E:\\Intelligent system design\\Uncertainty-Aware-and-Differentially-Private-Federated-Learning-for-Non-IID-ECG-Classification\\results\\checkpoints\\dp_fedavg_rounds_50_local_epochs_1_noise_1_clip_1_epscap_8\\dp_fedavg_best.pt",
+  "architecture": "dp-compatible",
+  "class_thresholds": {
+    "NORM": 0.45,
+    "MI": 0.21,
+    "STTC": 0.15,
+    "CD": 0.14,
+    "HYP": 0.09
+  },
+  "test_fixed_macro_f1": 0.27499958436478983,
+  "test_calibrated_macro_f1": 0.5341339027116525,
+  "test_macro_f1_change": 0.2591343183468627,
+  "test_fixed_weighted_f1": 0.380282032164508,
+  "test_calibrated_weighted_f1": 0.5886024681157354,
+  "test_macro_auroc": 0.7711038697552883
+}

@@ -1,0 +1,37 @@
+DP-FedAvg Model Summary
+========================================================================
+Checkpoint: E:\Intelligent system design\Uncertainty-Aware-and-Differentially-Private-Federated-Learning-for-Non-IID-ECG-Classification\results\threshold_calibration\dp_fedavg\checkpoint_with_calibrated_thresholds.pt
+Saved round: 9
+Validation loss at checkpoint: 0.4796450122260425
+Validation macro-F1 at checkpoint: 0.2819998629860396
+Validation macro-AUROC at checkpoint: 0.778445452400544
+Threshold strategy: class_specific_validation_calibrated
+Class thresholds:
+  NORM: 0.4500
+  MI: 0.2100
+  STTC: 0.1500
+  CD: 0.1400
+  HYP: 0.0900
+Total parameters: 38,597
+Trainable parameters: 38,597
+
+Architecture
+------------------------------------------------------------------------
+ECG1DCNN(
+  (features): Sequential(
+    (0): Conv1d(12, 32, kernel_size=(7,), stride=(1,), padding=(3,), bias=False)
+    (1): GroupNorm(8, 32, eps=1e-05, affine=True, bias=True)
+    (2): ReLU()
+    (3): MaxPool1d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (4): Conv1d(32, 64, kernel_size=(5,), stride=(1,), padding=(2,), bias=False)
+    (5): GroupNorm(8, 64, eps=1e-05, affine=True, bias=True)
+    (6): ReLU()
+    (7): MaxPool1d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (8): Conv1d(64, 128, kernel_size=(3,), stride=(1,), padding=(1,), bias=False)
+    (9): GroupNorm(8, 128, eps=1e-05, affine=True, bias=True)
+    (10): ReLU()
+    (11): AdaptiveAvgPool1d(output_size=1)
+  )
+  (dropout): Dropout(p=0.3, inplace=False)
+  (classifier): Linear(in_features=128, out_features=5, bias=True)
+)
